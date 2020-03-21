@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import matplotlib
 import scipy.optimize as opt
 
-
 class NN:
     def __init__(self, layers, labels):
         self.layers = layers
@@ -62,7 +61,7 @@ class NN:
     def sigmoid_gradient(self,z):
         return self.sigmoid(z) * (1 - self.sigmoid(z))
 
-    def gradient(self,weights):
+    def gradient(self):
         m = self.labels.shape[0]
         delta = []
         for each_weight in self.weight_shape:
@@ -79,14 +78,11 @@ class NN:
                 if l != 0:
                     zi = self.z_array[l-1][i:i+1, :]
                     zi = np.insert(zi, 0, np.ones(1),axis =1) #(1,26)
-                    d_li = np.dot(d_li,weights[l]) * self.sigmoid_gradient(zi)
-        #print(self.a_array[1][-1, :])
-        #print(zi)
+                    d_li = np.dot(d_li,self.weights[l]) * self.sigmoid_gradient(zi
+
         for i in range(len(delta)):
             delta[i] = delta[i] / m
-
         return delta
-
 
 
 def load_data(path, transpose=True):
@@ -133,13 +129,12 @@ if __name__ == '__main__':
     weights = [data['Theta1'], data['Theta2']]
     layers = [400, 25, 10]
     nn = NN(layers, y)
-   # print(nn.weight_shape)
     pred_matrix = nn.forward(X_raw, weights)
-    #print(pred_matrix)
-    #loss = nn.regularized_cost()
-    #print(loss)
-    delta = nn.gradient(weights)
-    print(delta[0])
+    print(pred_matrix)
+    loss = nn.regularized_cost()
+    print(loss)
+    delta = nn.gradient()
+    print(delta[0],delta[1])
 
 
 
