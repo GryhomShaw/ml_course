@@ -41,7 +41,6 @@ class NN:
             regularized_term += np.power(each_weight[:,1:],2).sum()
         return self.cost() + (lamba / (2*m)) * regularized_term
 
-
     def forward(self, x, weights=None):
         if weights is not None:
             self.weights = weights
@@ -59,6 +58,35 @@ class NN:
             else:
                 self.a_array.append(a_out)
         return self.a_array[-1]
+
+    def sigmoid_gradient(self,z):
+        return self.sigmoid(z) * (1 - self.sigmoid(z))
+
+    def gradient(self,weights):
+        m = self.labels.shape[0]
+        delta = []
+        for each_weight in self.weight_shape:
+            delta.append(np.zeros(each_weight))  #将每一层的权重对应的梯度初始化为0   (这里分别为 401*26, 10*25)
+        h = self.a_array[-1]
+        for i in range(m):
+            d_li = h[i:i+1, :] - self.labels[i:i+1, :]  # 求出输出层的deta_l (1,10)
+            #print(d_li)
+            for l in range(len(self.z_array)-1, -1, -1):
+                if l == len(self.z_array)-1:
+                    delta[l] += np.dot(d_li.T, self.a_array[l][i:i+1, :])
+                else:
+                    delta[l] += np.dot(d_li[:, 1:].T, self.a_array[l][i:i+1, :])
+                if l != 0:
+                    zi = self.z_array[l-1][i:i+1, :]
+                    zi = np.insert(zi, 0, np.ones(1),axis =1) #(1,26)
+                    d_li = np.dot(d_li,weights[l]) * self.sigmoid_gradient(zi)
+        #print(self.a_array[1][-1, :])
+        #print(zi)
+        for i in range(len(delta)):
+            delta[i] = delta[i] / m
+
+        return delta
+
 
 
 def load_data(path, transpose=True):
@@ -107,9 +135,11 @@ if __name__ == '__main__':
     nn = NN(layers, y)
    # print(nn.weight_shape)
     pred_matrix = nn.forward(X_raw, weights)
-    print(pred_matrix)
-    loss = nn.regularized_cost()
-    print(loss)
+    #print(pred_matrix)
+    #loss = nn.regularized_cost()
+    #print(loss)
+    delta = nn.gradient(weights)
+    print(delta[0])
 
 
 
