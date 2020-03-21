@@ -78,7 +78,7 @@ class NN:
                 if l != 0:
                     zi = self.z_array[l-1][i:i+1, :]
                     zi = np.insert(zi, 0, np.ones(1),axis =1) #(1,26)
-                    d_li = np.dot(d_li,self.weights[l]) * self.sigmoid_gradient(zi
+                    d_li = np.dot(d_li,self.weights[l]) * self.sigmoid_gradient(zi)
 
         for i in range(len(delta)):
             delta[i] = delta[i] / m
