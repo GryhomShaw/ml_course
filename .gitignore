@@ -41,4 +41,5 @@ __pypackages__/
 output/
 temp/
 .DS_Store
+test.py
 
